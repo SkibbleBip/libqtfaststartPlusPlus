@@ -4,6 +4,13 @@
 
 #include "QtFastStartCPP.hpp"
 
+
+#define VERSION_TOP     "1"
+#define VERSION_MID     "0"
+#define VERSION_BOTTOM  "0"
+
+
+
 /***************************************************************************
 * int main(int argc, char* argv[])
 * Author: SkibbleBip
@@ -28,6 +35,7 @@ int main(int argc, char* argv[])
                 {"output",    required_argument, NULL, 'o'},
                 {"help",      no_argument,       NULL, 'h'},
                 {"quiet",     no_argument,       NULL, 'q'},
+                {"version",   no_argument,       NULL, 'v'},
                 {NULL,      0,                   NULL, 0}
 
         };
@@ -35,7 +43,7 @@ int main(int argc, char* argv[])
 
         int ch;
         bool _exit = false;
-        while( (ch = getopt_long(argc, argv, "i:o:hq", long_options, NULL)) != -1){
+        while( (ch = getopt_long(argc, argv, "i:o:hqv", long_options, NULL)) != -1){
                 switch(ch){
                         case 'i':{
                                 input = fopen(optarg, "rb");
@@ -51,6 +59,10 @@ int main(int argc, char* argv[])
                                 quiet = true;
                                 break;
                         }
+                        case 'v':{
+                                std::cout << argv[0] << " v" VERSION_TOP "." VERSION_MID "." VERSION_BOTTOM << std::endl;
+                        }
+                        //fall through
                         case 'h':
                         default:
                         case ':':
