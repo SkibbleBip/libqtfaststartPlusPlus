@@ -223,7 +223,9 @@
 #ifdef DEBUG
                         std::cerr << "Last atom in file was not moov atom" << std::endl;
 #endif // DEBUG
-                        this->data = inFile->getByteArray();
+                        inFile->setPosition(0);
+                        inFile->transferTo(0, inFile->size(), outFile);
+                        this->data = outFile->getByteArray();
                         return;
                 }
 
