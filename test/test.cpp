@@ -3,6 +3,8 @@
 #include <getopt.h>
 
 #include "QtFastStartCPP.hpp"
+#include <stdio.h>
+#include <stdlib.h>
 
 
 #define VERSION_TOP     "1"

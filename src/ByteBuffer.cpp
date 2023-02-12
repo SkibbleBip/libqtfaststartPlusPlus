@@ -39,8 +39,48 @@
 
 #include "ByteBuffer.hpp"
 #include <string.h>
-#include <endian.h>
 
+#ifdef __unix__
+#include <endian.h>
+#elif defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+/*Definitions of endian byte swapping for windows*/
+const int16_t __num = 1;
+const bool __littleEndian = (*(int8_t *)&__num == 1 ? true : false);
+
+
+    #if defined(__GNUC__ )
+    /*For GCC*/
+    #define be16toh(X) (__littleEndian ? ((X & 0xff00) >> 8) + ((X & 0x00ff) << 8) : X)
+    #define le16toh(X) (__littleEndian ? X : ((X & 0xff00) >> 8) + ((X & 0x00ff) << 8))
+    #define be32toh(X) (__littleEndian ? __builtin_bswap32(X) : X)
+    #define le32toh(X) (__littleEndian ? X : __builtin_bswap32(X))
+    #define be64toh(X) (__littleEndian ? __builtin_bswap64(X) : X)
+    #define le64toh(X) (__littleEndian ? X : __builtin_bswap64(X))
+
+
+    #elif defined(_MSC_VER)
+    /*For MSVC*/
+    #define be16toh(X) (__littleEndian ? _byteswap_ushort(X) : X)
+    #define le16toh(X) (__littleEndian ? X : _byteswap_ushort(X))
+    #define be32toh(X) (__littleEndian ? _byteswap_ulong(X) : X)
+    #define le32toh(X) (__littleEndian ? X : _byteswap_ulong(X))
+    #define be64toh(X) (__littleEndian ? _byteswap_uint64(X) : X)
+    #define le64toh(X) (__littleEndian ? X : _byteswap_uint64(X))
+
+    #endif // defined
+
+    #define htobe16(X) be16toh(X)
+    #define htole16(X) le16toh(X)
+    #define htobe32(X) be32toh(X)
+    #define htole32(X) le32toh(X)
+    #define htobe64(X) be64toh(X)
+    #define htole64(X) le64toh(X)
+
+
+
+#else
+        #error Operating system not supported
+#endif // linux
 #include <stdio.h>
 
 //#define DEBUG

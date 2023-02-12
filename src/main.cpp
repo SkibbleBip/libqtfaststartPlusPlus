@@ -41,6 +41,33 @@
 
 
 
+
+#ifdef __unix__
+#include <endian.h>
+#elif defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+/*Definitions of endian byte swapping for windows*/
+const int16_t __num = 1;
+const bool __littleEndian = (*(int8_t *)&__num == 1 ? true : false);
+
+
+    #if defined(__GNUC__ )
+    /*For GCC*/
+    #define htobe32(X) (__littleEndian ? __builtin_bswap32(X) : X)
+
+
+    #elif defined(_MSC_VER)
+    /*For MSVC*/
+    #define htobe32(X) (__littleEndian ? _byteswap_ulong(X) : X)
+
+    #endif // defined
+
+
+#else
+        #error Operating system not supported
+#endif // linux
+
+
+
 /***************************************************************************
 * uint64_t QtFastStartSTD::readAndFill(QtFastStartSTD::ArtificialFileStream *infile, BYTEBUFFER::ByteBuffer *buffer)
 * Author: SkibbleBip
