@@ -9,7 +9,15 @@
 
 #define VERSION_TOP     "1"
 #define VERSION_MID     "0"
-#define VERSION_BOTTOM  "0"
+#define VERSION_BOTTOM  "1"
+
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+/*Components needed for setting stdin and stdout in binary mode*/
+#include <io.h>
+#include <fcntl.h>
+#define ___WINDOWS
+
+#endif // defined
 
 
 
@@ -81,16 +89,30 @@ int main(int argc, char* argv[])
                 return 1;
         }
 
-        if(!input)
+        if(!input){
         //if the input was not set, then set the input to the stdin of the program
-                input = stdin;
+#ifdef ___WINDOWS
+            if( -1 == _setmode( STDIN_FILENO, _O_BINARY ) ){
+                std::cerr << "Failed to set stdin as binary" << std::endl;
+                return 1;
+            }
+#endif // ___WINDOWS
+            input = stdin;
+        }
         else if(!quiet)
-                std::cerr << "Input file: " << inStr << std::endl;
-        if(!output)
+            std::cerr << "Input file: " << inStr << std::endl;
+        if(!output){
         //ditto for output
-                output = stdout;
+#ifdef ___WINDOWS
+            if( -1 == _setmode( STDOUT_FILENO, _O_BINARY) ){
+                std::cerr << "Failed to set stdin as binary" << std::endl;
+                return 1;
+            }
+#endif // ___WINDOWS
+            output = stdout;
+        }
         else if(!quiet)
-                std::cerr << "Output file: " << outStr << std::endl;
+            std::cerr << "Output file: " << outStr << std::endl;
 
 
         byte* totalFile = NULL;
